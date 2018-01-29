@@ -16,8 +16,9 @@ FROM alpine:3.4
 MAINTAINER Timothy St. Clair "tstclair@heptio.com"  
 
 RUN apk update --no-cache && apk add ca-certificates
+RUN addgroup -g 2001 cloudiron && \
+    adduser -D -u 2001 -G cloudiron cloudiron
 ADD eventrouter /eventrouter 
-USER nobody:nobody
-
+USER cloudiron:cloudiron
 CMD ["/bin/sh", "-c", "/eventrouter -v 3 -logtostderr"]
 

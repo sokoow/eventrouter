@@ -36,6 +36,8 @@ func ManufactureSink() (e EventSinkInterface) {
 	s := viper.GetString("sink")
 	glog.Infof("Sink is [%v]", s)
 	switch s {
+	case "file":
+		e = NewFileSink()
 	case "glog":
 		e = NewGlogSink()
 	case "stdout":

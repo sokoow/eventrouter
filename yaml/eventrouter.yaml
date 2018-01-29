@@ -44,7 +44,8 @@ apiVersion: v1
 data:
   config.json: |- 
     {
-      "sink": "glog"
+      "sink": "file",
+      "filesinkpath": "/app/logs/kube-events.log"
     }
 kind: ConfigMap
 metadata:
@@ -71,13 +72,25 @@ spec:
     spec:
       containers:
         - name: kube-eventrouter
-          image: gcr.io/heptio-images/eventrouter:latest
-          imagePullPolicy: IfNotPresent
+          image: docker-registry.cloud.aws.tenablesecurity.com:8888/heptio-eventrouter:latest
+          imagePullPolicy: Always
           volumeMounts:
           - name: config-volume
             mountPath: /etc/eventrouter
+          - name: service-logs
+            mountPath: /app/logs
+          - name: service-tmp
+            mountPath: /app/tmp
       serviceAccount: eventrouter
       volumes:
         - name: config-volume
           configMap:
             name: eventrouter-cm
+        - hostPath:
+            path: /data/log
+            type: ""
+          name: service-logs
+        - hostPath:
+            path: /data/tmp
+            type: ""
+          name: service-tmp

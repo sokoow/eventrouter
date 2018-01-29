@@ -1,6 +1,7 @@
 {
 "kubeconfig": "/var/run/kubernetes/admin.kubeconfig",
-"sink": "glog",
+"sink": "file",
+"filesinkpath": "/var/log/kube-events",
 "httpSinkUrl": "http://localhost:8080",
 "httpSinkBufferSize": 1500,
 "httpSinkDiscardMessages": true
