@@ -39,6 +39,15 @@ func NewFileSink() EventSinkInterface {
 	return &FileSink{}
 }
 
+
+type EventMessage struct {
+  Item string
+  Timestamp string
+  Reason string
+  Message string
+  RawEventStream string
+}
+
 // UpdateEvents implements the EventSinkInterface
 func (gs *FileSink) UpdateEvents(eNew *v1.Event, eOld *v1.Event) {
         filename := viper.GetString("filesinkpath")
@@ -49,12 +58,33 @@ func (gs *FileSink) UpdateEvents(eNew *v1.Event, eOld *v1.Event) {
 
 	eData := NewEventData(eNew, eOld)
 
-	if eJSONBytes, err := json.Marshal(eData); err == nil {
-		_, err = file.WriteString(string(eJSONBytes))
+
+	eJSONBytes, err := json.Marshal(eData)
+	if err == nil {
 		if isError(err) { os.Exit(1) }
 	} else {
 		fmt.Fprintf(os.Stderr, "Failed to json serialize event: %v", err)
 	}
+
+
+        msg := &EventMessage{
+                Item: eNew.InvolvedObject.Name,
+                Reason: eNew.Reason,
+                Message: eNew.Message,
+                Timestamp: eNew.LastTimestamp.String(),
+                RawEventStream: string(eJSONBytes),
+        }
+
+
+	msgJSONBytes, err := json.Marshal(msg)
+	if err == nil {
+		if isError(err) { os.Exit(1) }
+	} else {
+		fmt.Fprintf(os.Stderr, "Failed to json serialize event: %v", err)
+	}
+
+	_, err = file.WriteString(string(msgJSONBytes))
+	if isError(err) { os.Exit(1) }
 	err = file.Sync()
         if isError(err) { os.Exit(1) }
 }

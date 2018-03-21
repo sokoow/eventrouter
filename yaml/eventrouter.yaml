@@ -72,7 +72,7 @@ spec:
     spec:
       containers:
         - name: kube-eventrouter
-          image: docker-registry.cloud.aws.tenablesecurity.com:8888/heptio-eventrouter:latest
+          image: docker-registry.cloud.aws.tenablesecurity.com:8888/heptio-eventrouter-0.3:latest
           imagePullPolicy: Always
           volumeMounts:
           - name: config-volume
